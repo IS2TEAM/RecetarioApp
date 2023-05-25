@@ -5,6 +5,8 @@ namespace RecetarioApp.Models;
 
 public partial class Shoppingingredient
 {
+    public int IdShoppingIngredient { get; set; }
+
     public int IdList { get; set; }
 
     public int IdIngredient { get; set; }

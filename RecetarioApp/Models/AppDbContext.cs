@@ -48,9 +48,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<IngredienteTiendum>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("ingrediente_tienda");
+            entity.HasKey(e => e.IdIngredientTiendum).HasName("PK__ingredieTiendum__9D79738D7A611B55");
 
             entity.Property(e => e.IdIngrediente).HasColumnName("id_ingrediente");
             entity.Property(e => e.IdTienda).HasColumnName("id_tienda");
@@ -98,9 +96,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Recipesingredient>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("recipesingredients");
+            entity.HasKey(e => e.IdRecipeIngredient).HasName("PK__recipeIngredie__9D79738D7A611B55");
 
             entity.Property(e => e.IdIngredient).HasColumnName("id_ingredient");
             entity.Property(e => e.IdRecipe).HasColumnName("id_recipe");
@@ -122,9 +118,8 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Shoppingingredient>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("shoppingingredients");
+            entity.HasKey(e => e.IdShoppingIngredient).HasName("PK__shoppingIngredie__9D79738D7A611B55");
+
 
             entity.Property(e => e.IdIngredient).HasColumnName("id_ingredient");
             entity.Property(e => e.IdList).HasColumnName("id_list");
