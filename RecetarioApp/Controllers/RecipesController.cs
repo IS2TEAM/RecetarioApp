@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecetarioApp.Models;
+using RecetarioApp.Models.ModelDTO;
 
 namespace RecetarioApp.Controllers
 {
@@ -14,10 +16,12 @@ namespace RecetarioApp.Controllers
     public class RecipesController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public RecipesController(AppDbContext context)
+        public RecipesController(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Recipes
@@ -83,8 +87,9 @@ namespace RecetarioApp.Controllers
         // POST: api/Recipes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Recipe>> PostRecipe(Recipe recipe)
+        public async Task<ActionResult<Recipe>> PostRecipe(RecipeDTO recipeDto)
         {
+            var recipe = _mapper.Map<Recipe>(recipeDto);
           if (_context.Recipes == null)
           {
               return Problem("Entity set 'AppDbContext.Recipes'  is null.");
