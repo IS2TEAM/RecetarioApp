@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecetarioApp.Models;
+using RecetarioApp.Models.ModelDTO;
 
 namespace RecetarioApp.Controllers
 {
@@ -15,9 +17,12 @@ namespace RecetarioApp.Controllers
     {
         private readonly AppDbContext _context;
 
-        public UsersController(AppDbContext context)
+        private readonly IMapper _mapper;
+
+        public UsersController(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Users
@@ -59,6 +64,8 @@ namespace RecetarioApp.Controllers
                 return BadRequest();
             }
 
+
+
             _context.Entry(user).State = EntityState.Modified;
 
             try
@@ -83,9 +90,11 @@ namespace RecetarioApp.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser(UserDTO userDto)
         {
-          if (_context.Users == null)
+            var user = _mapper.Map<User>(userDto);
+
+            if (_context.Users == null)
           {
               return Problem("Entity set 'AppDbContext.Users'  is null.");
           }
