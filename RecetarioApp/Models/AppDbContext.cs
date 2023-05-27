@@ -17,6 +17,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Ingredient> Ingredients { get; set; }
 
+    public virtual DbSet<IngredientUser> IngredientsUser { get; set; }
+
     public virtual DbSet<IngredienteTiendum> IngredienteTienda { get; set; }
 
     public virtual DbSet<Recipe> Recipes { get; set; }
@@ -44,6 +46,24 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("name_ingredient");
+        });
+        modelBuilder.Entity<IngredientUser>(entity =>
+        {
+            entity.HasKey(e => e.IdIngredient).HasName("PK__ingredieUser__9D79738D7A611B55");
+
+            entity.ToTable("ingredientsUsers");
+
+            entity.Property(e => e.IdIngredient).HasColumnName("id_ingredient");
+            entity.Property(e => e.NameIngredient)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("name_ingredient");
+            entity.Property(e => e.ShopIngredient)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("name_shop");
+            entity.Property(e => e.PriceIngredient)
+                .HasColumnName("price_shop");
         });
 
         modelBuilder.Entity<IngredienteTiendum>(entity =>

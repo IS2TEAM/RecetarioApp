@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
+using Azure.Storage.Blobs;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
 using RecetarioApp.Models;
 using RecetarioApp.Models.ModelDTO;
 
@@ -29,10 +33,10 @@ namespace RecetarioApp.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Ingredient>>> GetIngredients()
         {
-          if (_context.Ingredients == null)
-          {
-              return NotFound();
-          }
+            if (_context.Ingredients == null)
+            {
+                return NotFound();
+            }
             return await _context.Ingredients.ToListAsync();
         }
 
@@ -40,10 +44,10 @@ namespace RecetarioApp.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Ingredient>> GetIngredient(int id)
         {
-          if (_context.Ingredients == null)
-          {
-              return NotFound();
-          }
+            if (_context.Ingredients == null)
+            {
+                return NotFound();
+            }
             var ingredient = await _context.Ingredients.FindAsync(id);
 
             if (ingredient == null)
@@ -52,6 +56,29 @@ namespace RecetarioApp.Controllers
             }
 
             return ingredient;
+        }
+
+        [HttpPost("uploadImage")]
+        public async Task<IActionResult> PostPhotoOnAzure(IFormFile file)
+        {
+            var connectionString = "DefaultEndpointsProtocol=https;AccountName=imagenesmicocinita;AccountKey=TqI5keL9jgYtw/xvsJS2wHiJWISpY54/cP11IHWZaWUd0/4hmdNZoXteWoAR9QmwvoRGF0FSnf+d+AStuSA/Iw==;EndpointSuffix=core.windows.net";
+            var storageAccount = CloudStorageAccount.Parse(connectionString);
+            Console.WriteLine("Este es la conexion a azure: " + storageAccount);
+            var blobClient = storageAccount.CreateCloudBlobClient();
+            var containerName = "imagenesmicocinita";
+            var container = blobClient.GetContainerReference(containerName);
+            var blobName = file.FileName.Replace(" ","_");
+            var blob = container.GetBlockBlobReference(blobName);
+            var memoryStream = new MemoryStream();
+            using (var stream = file.OpenReadStream())
+            {
+                stream.CopyTo(memoryStream);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+            }
+            await blob.UploadFromStreamAsync(memoryStream);
+            var blobUrl = blob.Uri.ToString();
+            Console.WriteLine("Este es la ruta en azure:" + blobUrl);
+            return Ok(new { blobUrl });
         }
 
         // PUT: api/Ingredients/5

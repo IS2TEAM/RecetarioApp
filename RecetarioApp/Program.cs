@@ -13,7 +13,11 @@ builder.Services.AddSqlServer<AppDbContext>(builder.Configuration.GetConnectionS
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
-
+app.UseCors(x => x
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .WithExposedHeaders("x-my-custom-header", "tamanio", "tamanio-subjects", "tamanio-inscriptions"));
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
