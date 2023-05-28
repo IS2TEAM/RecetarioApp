@@ -2,6 +2,7 @@
 {
     public class RecipeDTO
     {
+        public int IdRecipe { get; set; }
         public int UserId { get; set; }
 
         public string RecipesName { get; set; } = null!;

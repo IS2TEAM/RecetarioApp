@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecetarioApp.Models;
 using RecetarioApp.Models.ModelDTO;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RecetarioApp.Controllers
 {
@@ -27,6 +29,7 @@ namespace RecetarioApp.Controllers
 
         // GET: api/Users
         [HttpGet]
+        [SwaggerOperation(Summary = "Obtener todos los usuarios")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
           if (_context.Users == null)
@@ -38,6 +41,7 @@ namespace RecetarioApp.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Obtiene un usuario", Description = "Obtener un usuario en especifico con el id")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
           if (_context.Users == null)
@@ -57,14 +61,15 @@ namespace RecetarioApp.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        [SwaggerOperation(Summary = "Modificar todas las caracteristicas de un usuario", Description = "Modificar todas las caracteristicas de un usuario sistema.  \nAgregar el id en ambos campos ya que se necesita para realizar la busqueda y los cambios en la base")]
+        public async Task<IActionResult> PutUser(int id, UserDTO userDto)
         {
+            var user = _mapper.Map<User>(userDto);
+
             if (id != user.IdUser)
             {
                 return BadRequest();
             }
-
-
 
             _context.Entry(user).State = EntityState.Modified;
 
@@ -90,6 +95,7 @@ namespace RecetarioApp.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [SwaggerOperation(Summary = "Crear un nuevo usuario", Description = "Crea un nuevo usuario en el sistema.  \nNo agregar el id ya que este es autoincremental")]
         public async Task<ActionResult<User>> PostUser(UserDTO userDto)
         {
             var user = _mapper.Map<User>(userDto);
@@ -106,6 +112,7 @@ namespace RecetarioApp.Controllers
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Eliminar un usuario", Description = "Eliminar un usuario en el sistema.")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             if (_context.Users == null)
