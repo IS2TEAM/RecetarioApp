@@ -2,6 +2,6 @@
 {
     public class TiendumDTO
     {
-        public string NombreTienda { get; set; } = null!;
+        public string NameTiendum { get; set; } = null!;
     }
 }

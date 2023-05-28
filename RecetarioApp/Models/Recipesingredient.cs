@@ -5,7 +5,8 @@ namespace RecetarioApp.Models;
 
 public partial class Recipesingredient
 {
-    public int IdRecipeIngredient { get; set;}
+    public int IdRecipeIngredient { get; set; }
+
     public int IdIngredient { get; set; }
 
     public int IdRecipe { get; set; }
@@ -15,5 +16,4 @@ public partial class Recipesingredient
     public virtual Ingredient IdIngredientNavigation { get; set; } = null!;
 
     public virtual Recipe IdRecipeNavigation { get; set; } = null!;
-    
 }

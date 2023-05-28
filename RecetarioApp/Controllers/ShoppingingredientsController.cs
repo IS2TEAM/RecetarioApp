@@ -54,7 +54,7 @@ namespace RecetarioApp.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutShoppingingredient(int id, Shoppingingredient shoppingingredient)
         {
-            if (id != shoppingingredient.IdShoppingIngredient)
+            if (id != shoppingingredient.IdShoppingIngredients)
             {
                 return BadRequest();
             }
@@ -92,7 +92,7 @@ namespace RecetarioApp.Controllers
             _context.Shoppingingredients.Add(shoppingingredient);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetShoppingingredient", new { id = shoppingingredient.IdShoppingIngredient }, shoppingingredient);
+            return CreatedAtAction("GetShoppingingredient", new { id = shoppingingredient.IdShoppingIngredients }, shoppingingredient);
         }
 
         // DELETE: api/Shoppingingredients/5
@@ -117,7 +117,7 @@ namespace RecetarioApp.Controllers
 
         private bool ShoppingingredientExists(int id)
         {
-            return (_context.Shoppingingredients?.Any(e => e.IdShoppingIngredient == id)).GetValueOrDefault();
+            return (_context.Shoppingingredients?.Any(e => e.IdShoppingIngredients == id)).GetValueOrDefault();
         }
     }
 }

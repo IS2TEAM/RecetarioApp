@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,12 +14,10 @@ namespace RecetarioApp.Controllers
     public class TiendumsController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly IMapper _mapper;
 
-        public TiendumsController(AppDbContext context, IMapper mapper)
+        public TiendumsController(AppDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         // GET: api/Tiendums
@@ -57,7 +54,7 @@ namespace RecetarioApp.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTiendum(int id, Tiendum tiendum)
         {
-            if (id != tiendum.IdTienda)
+            if (id != tiendum.IdTiendum)
             {
                 return BadRequest();
             }
@@ -95,7 +92,7 @@ namespace RecetarioApp.Controllers
             _context.Tienda.Add(tiendum);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTiendum", new { id = tiendum.IdTienda }, tiendum);
+            return CreatedAtAction("GetTiendum", new { id = tiendum.IdTiendum }, tiendum);
         }
 
         // DELETE: api/Tiendums/5
@@ -120,7 +117,7 @@ namespace RecetarioApp.Controllers
 
         private bool TiendumExists(int id)
         {
-            return (_context.Tienda?.Any(e => e.IdTienda == id)).GetValueOrDefault();
+            return (_context.Tienda?.Any(e => e.IdTiendum == id)).GetValueOrDefault();
         }
     }
 }

@@ -10,4 +10,6 @@ public partial class Shoppinglist
     public int IdRecipe { get; set; }
 
     public virtual Recipe IdRecipeNavigation { get; set; } = null!;
+
+    public virtual ICollection<Shoppingingredient> Shoppingingredients { get; set; } = new List<Shoppingingredient>();
 }

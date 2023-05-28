@@ -17,9 +17,9 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Ingredient> Ingredients { get; set; }
 
-    public virtual DbSet<IngredientUser> IngredientsUser { get; set; }
+    public virtual DbSet<IngredientTiendum> IngredientTiendum { get; set; }
 
-    public virtual DbSet<IngredienteTiendum> IngredienteTienda { get; set; }
+    public virtual DbSet<IngredientsUser> IngredientsUsers { get; set; }
 
     public virtual DbSet<Recipe> Recipes { get; set; }
 
@@ -33,11 +33,15 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-JK1LGID;Initial Catalog=mi_cocinita;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Ingredient>(entity =>
         {
-            entity.HasKey(e => e.IdIngredient).HasName("PK__ingredie__9D79738D7A611B55");
+            entity.HasKey(e => e.IdIngredient).HasName("PK__ingredie__9D79738DE45DA379");
 
             entity.ToTable("ingredients");
 
@@ -47,9 +51,32 @@ public partial class AppDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("name_ingredient");
         });
-        modelBuilder.Entity<IngredientUser>(entity =>
+
+        modelBuilder.Entity<IngredientTiendum>(entity =>
         {
-            entity.HasKey(e => e.IdIngredient).HasName("PK__ingredieUser__9D79738D7A611B55");
+            entity.HasKey(e => e.IdIngredientTiendum).HasName("PK__ingredie__3B99A359C4B94B76");
+
+            entity.ToTable("ingredientTiendum");
+
+            entity.Property(e => e.IdIngredientTiendum).HasColumnName("id_ingredient_tiendum");
+            entity.Property(e => e.IdIngredient).HasColumnName("id_ingredient");
+            entity.Property(e => e.IdTiendum).HasColumnName("id_tiendum");
+            entity.Property(e => e.Price).HasColumnName("price");
+
+            entity.HasOne(d => d.IdIngredientNavigation).WithMany(p => p.IngredientTiendum)
+                .HasForeignKey(d => d.IdIngredient)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ingredien__id_in__46E78A0C");
+
+            entity.HasOne(d => d.IdTiendumNavigation).WithMany(p => p.IngredientTiendum)
+                .HasForeignKey(d => d.IdTiendum)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ingredien__id_ti__47DBAE45");
+        });
+
+        modelBuilder.Entity<IngredientsUser>(entity =>
+        {
+            entity.HasKey(e => e.IdIngredient).HasName("PK__ingredie__9D79738D4E64BC8F");
 
             entity.ToTable("ingredientsUsers");
 
@@ -58,36 +85,16 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("name_ingredient");
-            entity.Property(e => e.ShopIngredient)
+            entity.Property(e => e.NameShop)
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("name_shop");
-            entity.Property(e => e.PriceIngredient)
-                .HasColumnName("price_shop");
-        });
-
-        modelBuilder.Entity<IngredienteTiendum>(entity =>
-        {
-            entity.HasKey(e => e.IdIngredientTiendum).HasName("PK__ingredieTiendum__9D79738D7A611B55");
-
-            entity.Property(e => e.IdIngrediente).HasColumnName("id_ingrediente");
-            entity.Property(e => e.IdTienda).HasColumnName("id_tienda");
-            entity.Property(e => e.Precio).HasColumnName("precio");
-
-            entity.HasOne(d => d.IdIngredienteNavigation).WithMany()
-                .HasForeignKey(d => d.IdIngrediente)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ingredien__id_in__5EBF139D");
-
-            entity.HasOne(d => d.IdTiendaNavigation).WithMany()
-                .HasForeignKey(d => d.IdTienda)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ingredien__id_ti__5DCAEF64");
+            entity.Property(e => e.PriceShop).HasColumnName("price_shop");
         });
 
         modelBuilder.Entity<Recipe>(entity =>
         {
-            entity.HasKey(e => e.IdRecipe).HasName("PK__recipes__1F2843E6A072B33C");
+            entity.HasKey(e => e.IdRecipe).HasName("PK__recipes__1F2843E60818EB2D");
 
             entity.ToTable("recipes");
 
@@ -116,8 +123,11 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Recipesingredient>(entity =>
         {
-            entity.HasKey(e => e.IdRecipeIngredient).HasName("PK__recipeIngredie__9D79738D7A611B55");
+            entity.HasKey(e => e.IdRecipeIngredient).HasName("PK__recipesi__2B43ED794C4443FB");
 
+            entity.ToTable("recipesingredients");
+
+            entity.Property(e => e.IdRecipeIngredient).HasColumnName("id_recipe_ingredient");
             entity.Property(e => e.IdIngredient).HasColumnName("id_ingredient");
             entity.Property(e => e.IdRecipe).HasColumnName("id_recipe");
             entity.Property(e => e.Quantity)
@@ -125,12 +135,12 @@ public partial class AppDbContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("quantity");
 
-            entity.HasOne(d => d.IdIngredientNavigation).WithMany()
+            entity.HasOne(d => d.IdIngredientNavigation).WithMany(p => p.Recipesingredients)
                 .HasForeignKey(d => d.IdIngredient)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_recipesingredients_ingredients");
 
-            entity.HasOne(d => d.IdRecipeNavigation).WithMany()
+            entity.HasOne(d => d.IdRecipeNavigation).WithMany(p => p.Recipesingredients)
                 .HasForeignKey(d => d.IdRecipe)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_recipesingredients_recipes");
@@ -138,18 +148,20 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Shoppingingredient>(entity =>
         {
-            entity.HasKey(e => e.IdShoppingIngredient).HasName("PK__shoppingIngredie__9D79738D7A611B55");
+            entity.HasKey(e => e.IdShoppingIngredients).HasName("PK__shopping__81FD008215E1DF81");
 
+            entity.ToTable("shoppingingredients");
 
+            entity.Property(e => e.IdShoppingIngredients).HasColumnName("id_shoppingIngredients");
             entity.Property(e => e.IdIngredient).HasColumnName("id_ingredient");
             entity.Property(e => e.IdList).HasColumnName("id_list");
 
-            entity.HasOne(d => d.IdIngredientNavigation).WithMany()
+            entity.HasOne(d => d.IdIngredientNavigation).WithMany(p => p.Shoppingingredients)
                 .HasForeignKey(d => d.IdIngredient)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_shoppingingredients_ingredients");
 
-            entity.HasOne(d => d.IdListNavigation).WithMany()
+            entity.HasOne(d => d.IdListNavigation).WithMany(p => p.Shoppingingredients)
                 .HasForeignKey(d => d.IdList)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_shoppingingredients_shoppinglist");
@@ -157,7 +169,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Shoppinglist>(entity =>
         {
-            entity.HasKey(e => e.IdList).HasName("PK__shopping__99804307CCBFE5F4");
+            entity.HasKey(e => e.IdList).HasName("PK__shopping__9980430701A2F7EF");
 
             entity.ToTable("shoppinglist");
 
@@ -174,20 +186,20 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Tiendum>(entity =>
         {
-            entity.HasKey(e => e.IdTienda).HasName("PK__tienda__7C49D73634F2D987");
+            entity.HasKey(e => e.IdTiendum).HasName("PK__tiendum__8B4AB0BFFCA09E32");
 
-            entity.ToTable("tienda");
+            entity.ToTable("tiendum");
 
-            entity.Property(e => e.IdTienda).HasColumnName("id_tienda");
-            entity.Property(e => e.NombreTienda)
+            entity.Property(e => e.IdTiendum).HasColumnName("id_tiendum");
+            entity.Property(e => e.NameTiendum)
                 .HasMaxLength(255)
                 .IsUnicode(false)
-                .HasColumnName("nombre_tienda");
+                .HasColumnName("name_tiendum");
         });
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.IdUser).HasName("PK__users__D2D14637A8C0DCDA");
+            entity.HasKey(e => e.IdUser).HasName("PK__users__D2D1463721488889");
 
             entity.ToTable("users");
 

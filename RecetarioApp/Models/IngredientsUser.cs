@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace RecetarioApp.Models;
 
-public partial class IngredientUser
+public partial class IngredientsUser
 {
     public int IdIngredient { get; set; }
 
     public string NameIngredient { get; set; } = null!;
-    public string ShopIngredient { get; set; } = null!;
 
-    public int PriceIngredient { get; set; }
+    public string NameShop { get; set; } = null!;
 
+    public int PriceShop { get; set; }
 }

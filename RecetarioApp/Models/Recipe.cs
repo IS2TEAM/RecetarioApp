@@ -19,6 +19,8 @@ public partial class Recipe
 
     public string RecipePhoto { get; set; } = null!;
 
+    public virtual ICollection<Recipesingredient> Recipesingredients { get; set; } = new List<Recipesingredient>();
+
     public virtual ICollection<Shoppinglist> Shoppinglists { get; set; } = new List<Shoppinglist>();
 
     public virtual User User { get; set; } = null!;
