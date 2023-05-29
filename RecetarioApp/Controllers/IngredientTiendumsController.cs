@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecetarioApp.Models;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RecetarioApp.Controllers
 {
@@ -14,14 +16,17 @@ namespace RecetarioApp.Controllers
     public class IngredientTiendumsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public IngredientTiendumsController(AppDbContext context)
+        public IngredientTiendumsController(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/IngredientTiendums
         [HttpGet]
+        [SwaggerOperation(Summary = "Obtener todos los ingredinetes tienda")]
         public async Task<ActionResult<IEnumerable<IngredientTiendum>>> GetIngredientTiendum()
         {
           if (_context.IngredientTiendum == null)
@@ -33,6 +38,7 @@ namespace RecetarioApp.Controllers
 
         // GET: api/IngredientTiendums/5
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Obtiene un ingrediente tienda", Description = "Obtener un ingrediente tineda en especifico con el id")]
         public async Task<ActionResult<IngredientTiendum>> GetIngredientTiendum(int id)
         {
           if (_context.IngredientTiendum == null)

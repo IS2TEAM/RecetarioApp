@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using RecetarioApp.Models;
 using RecetarioApp.Models.ModelDTO;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RecetarioApp.Controllers
 {
@@ -31,6 +32,7 @@ namespace RecetarioApp.Controllers
 
         // GET: api/Ingredients
         [HttpGet]
+        [SwaggerOperation(Summary = "Obtener todos los ingredientes")]
         public async Task<ActionResult<IEnumerable<Ingredient>>> GetIngredients()
         {
             if (_context.Ingredients == null)
@@ -42,6 +44,7 @@ namespace RecetarioApp.Controllers
 
         // GET: api/Ingredients/5
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Obtener un ingrediente.", Description = "Obtener un ingediente en especifico con el id")]
         public async Task<ActionResult<Ingredient>> GetIngredient(int id)
         {
             if (_context.Ingredients == null)
@@ -84,8 +87,11 @@ namespace RecetarioApp.Controllers
         // PUT: api/Ingredients/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutIngredient(int id, Ingredient ingredient)
+        [SwaggerOperation(Summary = "Modificar todas las caracteristicas de un ingrediente", Description = "Modificar todas las caracteristicas de un ingrediente en el sistema.  \nAgregar el id en ambos campos ya que se necesita para realizar la busqueda y los cambios en la base")]
+        public async Task<IActionResult> PutIngredient(int id, IngredientDTO ingredientDto)
         {
+            var ingredient = _mapper.Map<Ingredient>(ingredientDto);
+
             if (id != ingredient.IdIngredient)
             {
                 return BadRequest();
@@ -115,6 +121,7 @@ namespace RecetarioApp.Controllers
         // POST: api/Ingredients
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [SwaggerOperation(Summary = "Crear un ingrediente", Description = "Crear un ingrediente en el sistema.  \nNo agregar el id ya que este es autoincremental")]
         public async Task<ActionResult<Ingredient>> PostIngredient(IngredientDTO ingredientDto)
         {
             var ingredient = _mapper.Map<Ingredient>(ingredientDto);
@@ -130,6 +137,7 @@ namespace RecetarioApp.Controllers
 
         // DELETE: api/Ingredients/5
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Eliminar un ingrediente", Description = "Eliminar un ingrediente en el sistema.")]
         public async Task<IActionResult> DeleteIngredient(int id)
         {
             if (_context.Ingredients == null)
