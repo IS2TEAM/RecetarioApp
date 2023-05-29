@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using RecetarioApp.Models;
 using RecetarioApp.Models.ModelDTO;
 using Swashbuckle.AspNetCore.Annotations;
@@ -39,7 +40,7 @@ namespace RecetarioApp.Controllers
 
         // GET: api/Recipes/5
         [HttpGet("{id}")]
-        [SwaggerOperation(Summary = "Obtener una receta ", Description = "Obtener una receta en especifico")]
+        [SwaggerOperation(Summary = "Obtener una receta", Description = "Obtener una receta en especifico")]
         public async Task<ActionResult<Recipe>> GetRecipe(int id)
         {
           if (_context.Recipes == null)
@@ -54,6 +55,24 @@ namespace RecetarioApp.Controllers
             }
 
             return recipe;
+        }
+
+        [HttpGet("byUser")]
+        [SwaggerOperation(Summary = "Obtener recetas por Usuario", Description = "Obtener las receta de un usario con el id de este")]
+        public async Task<ActionResult<IEnumerable<Recipe>>> GetRecipesByUser(int idUser)
+        {
+            if (_context.Recipes == null)
+            {
+                return NotFound();
+            }
+            var recipessQuery = _context.Recipes.AsQueryable();
+
+            if (idUser > 0)
+            {
+                recipessQuery = recipessQuery.Where(s => s.UserId.Equals(idUser));
+            }
+            var recipes = await recipessQuery.ToListAsync();
+            return recipes;
         }
 
         // PUT: api/Recipes/5
