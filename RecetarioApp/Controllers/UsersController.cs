@@ -145,6 +145,20 @@ namespace RecetarioApp.Controllers
             return true;
         }
 
+        [HttpPost("getIdByCredentials {email} {password}")]
+        [SwaggerOperation(Summary = "Verificar las credenciales de inicio de sesión", Description = "Verifica si las credenciales de inicio de sesión son válidas.")]
+        public async Task<ActionResult<int>> getIdByCredentials(string email, string password)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.EmailUser == email && u.Password == password);
+
+            if (user != null)
+            {
+                return user.IdUser;
+            }
+
+            return -1;
+        }
+
         private bool UserExists(int id)
         {
             return (_context.Users?.Any(e => e.IdUser == id)).GetValueOrDefault();
