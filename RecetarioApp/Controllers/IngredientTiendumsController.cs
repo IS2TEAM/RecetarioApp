@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecetarioApp.Models;
+using RecetarioApp.Models.ModelDTO;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace RecetarioApp.Controllers
@@ -58,8 +59,10 @@ namespace RecetarioApp.Controllers
         // PUT: api/IngredientTiendums/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutIngredientTiendum(int id, IngredientTiendum ingredientTiendum)
+        [SwaggerOperation(Summary = "Modificar todas las caracteristicas de un ingrediente tienda", Description = "Modificar todas las caracteristicas de un ingrediente tienda en el sistema.  \nAgregar el id en ambos campos ya que se necesita para realizar la busqueda y los cambios en la base")]
+        public async Task<IActionResult> PutIngredientTiendum(int id, IngredientTiendumDTO ingredientTiendumDto)
         {
+            var ingredientTiendum = _mapper.Map<IngredientTiendum>(ingredientTiendumDto);
             if (id != ingredientTiendum.IdIngredientTiendum)
             {
                 return BadRequest();
@@ -89,8 +92,10 @@ namespace RecetarioApp.Controllers
         // POST: api/IngredientTiendums
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<IngredientTiendum>> PostIngredientTiendum(IngredientTiendum ingredientTiendum)
+        [SwaggerOperation(Summary = "Crear un nuevo ingrediente tienda", Description = "Crea un nuevo ingrediente tienda en el sistema.  \nNo agregar el id ya que este es autoincremental")]
+        public async Task<ActionResult<IngredientTiendum>> PostIngredientTiendum(IngredientTiendumDTO ingredientTiendumDto)
         {
+            var ingredientTiendum = _mapper.Map<IngredientTiendum>(ingredientTiendumDto);
           if (_context.IngredientTiendum == null)
           {
               return Problem("Entity set 'AppDbContext.IngredientTiendum'  is null.");
@@ -103,6 +108,7 @@ namespace RecetarioApp.Controllers
 
         // DELETE: api/IngredientTiendums/5
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Eliminar un ingrediente tienda", Description = "Eliminar un ingrediente tienda en el sistema.")]
         public async Task<IActionResult> DeleteIngredientTiendum(int id)
         {
             if (_context.IngredientTiendum == null)

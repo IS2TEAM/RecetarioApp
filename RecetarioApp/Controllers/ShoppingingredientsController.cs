@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using RecetarioApp.Mappers;
 using RecetarioApp.Models;
 using RecetarioApp.Models.ModelDTO;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RecetarioApp.Controllers
 {
@@ -27,6 +28,7 @@ namespace RecetarioApp.Controllers
 
         // GET: api/Shoppingingredients
         [HttpGet]
+        [SwaggerOperation(Summary = "Obtener todos los ingredientes comprados")]
         public async Task<ActionResult<IEnumerable<Shoppingingredient>>> GetShoppingingredients()
         {
           if (_context.Shoppingingredients == null)
@@ -38,6 +40,7 @@ namespace RecetarioApp.Controllers
 
         // GET: api/Shoppingingredients/5
         [HttpGet("{id}")]
+        [SwaggerOperation(Summary = "Obtiene un ingrediente comprado", Description = "Obtener un ingrediente comprado en especifico con el id")]
         public async Task<ActionResult<Shoppingingredient>> GetShoppingingredient(int id)
         {
           if (_context.Shoppingingredients == null)
@@ -57,8 +60,10 @@ namespace RecetarioApp.Controllers
         // PUT: api/Shoppingingredients/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutShoppingingredient(int id, Shoppingingredient shoppingingredient)
+        [SwaggerOperation(Summary = "Modificar todas las caracteristicas de un ingrediente comprado", Description = "Modificar todas las caracteristicas de un ingrediente comprado en el sistema.  \nAgregar el id en ambos campos ya que se necesita para realizar la busqueda y los cambios en la base")]
+        public async Task<IActionResult> PutShoppingingredient(int id, ShoppingingredientDTO shoppingingredientDto)
         {
+            var shoppingingredient = _mapper.Map<Shoppingingredient>(shoppingingredientDto);
             if (id != shoppingingredient.IdShoppingIngredients)
             {
                 return BadRequest();
@@ -88,6 +93,7 @@ namespace RecetarioApp.Controllers
         // POST: api/Shoppingingredients
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [SwaggerOperation(Summary = "Crear un nuevo ingrediente comprado", Description = "Crea un nuevo ingrediente comprado en el sistema.  \nNo agregar el id ya que este es autoincremental")]
         public async Task<ActionResult<Shoppingingredient>> PostShoppingingredient(ShoppingingredientDTO shoppingingredientDto)
         {
             var shoppingingredient = _mapper.Map<Shoppingingredient>(shoppingingredientDto);
@@ -104,6 +110,7 @@ namespace RecetarioApp.Controllers
 
         // DELETE: api/Shoppingingredients/5
         [HttpDelete("{id}")]
+        [SwaggerOperation(Summary = "Eliminar un ingrediente comprado", Description = "Eliminar un ingrediente comprado en el sistema.")]
         public async Task<IActionResult> DeleteShoppingingredient(int id)
         {
             if (_context.Shoppingingredients == null)

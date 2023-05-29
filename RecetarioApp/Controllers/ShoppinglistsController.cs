@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecetarioApp.Models;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RecetarioApp.Controllers
 {
@@ -14,14 +16,17 @@ namespace RecetarioApp.Controllers
     public class ShoppinglistsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ShoppinglistsController(AppDbContext context)
+        public ShoppinglistsController(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Shoppinglists
         [HttpGet]
+        [SwaggerOperation(Summary = "Obtener todos los ingredientes de la lista de compra")]
         public async Task<ActionResult<IEnumerable<Shoppinglist>>> GetShoppinglists()
         {
           if (_context.Shoppinglists == null)
