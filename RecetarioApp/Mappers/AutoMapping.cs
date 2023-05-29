@@ -11,7 +11,7 @@ namespace RecetarioApp.Mappers
             CreateMap<UserDTO, User>();
             CreateMap<RecipeDTO, Recipe>();
             CreateMap<ShoppingingredientDTO, Shoppingingredient>();
-
+            CreateMap<RecipesIngredientDTO, Recipesingredient>();
         }
     }
 }

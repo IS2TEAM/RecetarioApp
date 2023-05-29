@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecetarioApp.Models;
+using RecetarioApp.Models.ModelDTO;
 
 namespace RecetarioApp.Controllers
 {
@@ -14,10 +16,12 @@ namespace RecetarioApp.Controllers
     public class RecipesingredientsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public RecipesingredientsController(AppDbContext context)
+        public RecipesingredientsController(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Recipesingredients
@@ -52,8 +56,10 @@ namespace RecetarioApp.Controllers
         // PUT: api/Recipesingredients/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRecipesingredient(int id, Recipesingredient recipesingredient)
+        public async Task<IActionResult> PutRecipesingredient(int id, RecipesIngredientDTO recipesingredientDto)
         {
+            var recipesingredient = _mapper.Map<Recipesingredient>(recipesingredientDto);
+
             if (id != recipesingredient.IdRecipeIngredient)
             {
                 return BadRequest();
@@ -83,9 +89,10 @@ namespace RecetarioApp.Controllers
         // POST: api/Recipesingredients
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Recipesingredient>> PostRecipesingredient(Recipesingredient recipesingredient)
+        public async Task<ActionResult<Recipesingredient>> PostRecipesingredient(RecipesIngredientDTO recipesingredientDto)
         {
-          if (_context.Recipesingredients == null)
+            var recipesingredient = _mapper.Map<Recipesingredient>(recipesingredientDto);
+            if (_context.Recipesingredients == null)
           {
               return Problem("Entity set 'AppDbContext.Recipesingredients'  is null.");
           }
