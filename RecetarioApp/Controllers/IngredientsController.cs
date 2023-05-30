@@ -60,30 +60,6 @@ namespace RecetarioApp.Controllers
 
             return ingredient;
         }
-
-        [HttpPost("uploadImage")]
-        public async Task<IActionResult> PostPhotoOnAzure(IFormFile file)
-        {
-            var connectionString = "DefaultEndpointsProtocol=https;AccountName=imagenesmicocinita;AccountKey=TqI5keL9jgYtw/xvsJS2wHiJWISpY54/cP11IHWZaWUd0/4hmdNZoXteWoAR9QmwvoRGF0FSnf+d+AStuSA/Iw==;EndpointSuffix=core.windows.net";
-            var storageAccount = CloudStorageAccount.Parse(connectionString);
-            Console.WriteLine("Este es la conexion a azure: " + storageAccount);
-            var blobClient = storageAccount.CreateCloudBlobClient();
-            var containerName = "imagenesmicocinita";
-            var container = blobClient.GetContainerReference(containerName);
-            var blobName = file.FileName.Replace(" ","_");
-            var blob = container.GetBlockBlobReference(blobName);
-            var memoryStream = new MemoryStream();
-            using (var stream = file.OpenReadStream())
-            {
-                stream.CopyTo(memoryStream);
-                memoryStream.Seek(0, SeekOrigin.Begin);
-            }
-            await blob.UploadFromStreamAsync(memoryStream);
-            var blobUrl = blob.Uri.ToString();
-            Console.WriteLine("Este es la ruta en azure:" + blobUrl);
-            return Ok(new { blobUrl });
-        }
-
         // PUT: api/Ingredients/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

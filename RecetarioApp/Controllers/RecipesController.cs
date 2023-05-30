@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.WindowsAzure.Storage;
 using RecetarioApp.Models;
 using RecetarioApp.Models.ModelDTO;
 using Swashbuckle.AspNetCore.Annotations;
@@ -107,6 +108,29 @@ namespace RecetarioApp.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpPost("uploadImage")]
+        public async Task<IActionResult> PostPhotoOnAzure(IFormFile file)
+        {
+            var connectionString = "DefaultEndpointsProtocol=https;AccountName=imagenesmicocinitapp;AccountKey=J7YhFWk6WvglrkoNwmehQC6fgog0NxIeG7bQmk0WbaNPuFOwJPPEoSDtpD10f62F4hBCQ5LUu0Ds+AStQ2DszQ==;EndpointSuffix=core.windows.net";
+            var storageAccount = CloudStorageAccount.Parse(connectionString);
+            Console.WriteLine("Este es la conexion a azure: " + storageAccount);
+            var blobClient = storageAccount.CreateCloudBlobClient();
+            var containerName = "imagenes";
+            var container = blobClient.GetContainerReference(containerName);
+            var blobName = file.FileName.Replace(" ", "_");
+            var blob = container.GetBlockBlobReference(blobName);
+            var memoryStream = new MemoryStream();
+            using (var stream = file.OpenReadStream())
+            {
+                stream.CopyTo(memoryStream);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+            }
+            await blob.UploadFromStreamAsync(memoryStream);
+            var blobUrl = blob.Uri.ToString();
+            Console.WriteLine("Este es la ruta en azure:" + blobUrl);
+            return Ok(new { blobUrl });
         }
 
         // POST: api/Recipes
