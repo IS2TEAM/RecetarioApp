@@ -131,21 +131,22 @@ namespace RecetarioApp.Controllers
             return NoContent();
         }
 
-        [HttpPost("Login {email} {password}")]
+        [HttpGet("Login")]
         [SwaggerOperation(Summary = "Verificar las credenciales de inicio de sesión", Description = "Verifica si las credenciales de inicio de sesión son válidas.")]
-        public async Task<ActionResult<bool>> Login(string email, string password)
+        public async Task<ActionResult> Login(string email, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.EmailUser == email && u.Password== password);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.EmailUser == email && u.Password == password);
 
             if (user == null)
             {
-                return false;
+                return NotFound(new { validation = false});
             }
 
-            return true;
+            return Ok(new { validacion = true});
         }
 
-        [HttpPost("getIdByCredentials {email} {password}")]
+
+        [HttpGet("getIdByCredentials")]
         [SwaggerOperation(Summary = "Verificar las credenciales de inicio de sesión", Description = "Verifica si las credenciales de inicio de sesión son válidas.")]
         public async Task<ActionResult<int>> getIdByCredentials(string email, string password)
         {
@@ -153,10 +154,10 @@ namespace RecetarioApp.Controllers
 
             if (user != null)
             {
-                return user.IdUser;
+                return Ok(new { id = user.IdUser });
             }
 
-            return -1;
+            return NotFound(new { id = -1});
         }
 
         private bool UserExists(int id)
