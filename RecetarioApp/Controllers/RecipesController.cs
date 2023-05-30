@@ -147,6 +147,20 @@ namespace RecetarioApp.Controllers
             return NoContent();
         }
 
+        [HttpGet("GetLastRecipe")]
+        [SwaggerOperation(Summary = "Obtener la última receta")]
+        public ActionResult<Recipe> GetLastRecipe()
+        {
+            var lastRecipe = _context.Recipes.OrderByDescending(x => x.IdRecipe).FirstOrDefault();
+
+            if (lastRecipe == null)
+            {
+                return NotFound();
+            }
+
+            return lastRecipe;
+        }
+
         private bool RecipeExists(int id)
         {
             return (_context.Recipes?.Any(e => e.IdRecipe == id)).GetValueOrDefault();
