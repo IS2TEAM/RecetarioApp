@@ -128,6 +128,23 @@ namespace RecetarioApp.Controllers
             return NoContent();
         }
 
+        [HttpGet("getIngredientRecipe/{id}")]
+        public async Task<ActionResult<List<Recipesingredient>>> GetRecipeIngredient(int id)
+        {
+            var recipeIngredients = await _context.Recipesingredients.ToListAsync();
+
+            var matchingIngredients = recipeIngredients.Where(ri => ri.IdRecipe == id)
+                                                      .Select(ri => ri)
+                                                      .ToList();
+
+            if (matchingIngredients.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return matchingIngredients;
+        }
+
         private bool RecipesingredientExists(int id)
         {
             return (_context.Recipesingredients?.Any(e => e.IdRecipeIngredient == id)).GetValueOrDefault();
