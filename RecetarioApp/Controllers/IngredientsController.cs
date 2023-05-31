@@ -116,16 +116,17 @@ namespace RecetarioApp.Controllers
         [SwaggerOperation(Summary = "Eliminar un ingrediente", Description = "Eliminar un ingrediente en el sistema.")]
         public async Task<IActionResult> DeleteIngredient(int id)
         {
-            if (_context.Ingredients == null)
-            {
-                return NotFound();
-            }
             var ingredient = await _context.Ingredients.FindAsync(id);
             if (ingredient == null)
             {
                 return NotFound();
             }
 
+            var recipeIngredients = await _context.Recipesingredients
+                .Where(ri => ri.IdIngredient == id)
+                .ToListAsync();
+
+            _context.Recipesingredients.RemoveRange(recipeIngredients);
             _context.Ingredients.Remove(ingredient);
             await _context.SaveChangesAsync();
 

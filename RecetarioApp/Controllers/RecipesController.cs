@@ -150,21 +150,21 @@ namespace RecetarioApp.Controllers
             return CreatedAtAction("GetRecipe", new { id = recipe.IdRecipe }, recipe);
         }
 
-        // DELETE: api/Recipes/5
         [HttpDelete("{id}")]
         [SwaggerOperation(Summary = "Eliminar una receta", Description = "Eliminar una receta en el sistema.")]
         public async Task<IActionResult> DeleteRecipe(int id)
         {
-            if (_context.Recipes == null)
-            {
-                return NotFound();
-            }
             var recipe = await _context.Recipes.FindAsync(id);
             if (recipe == null)
             {
                 return NotFound();
             }
 
+            var recipeIngredients = await _context.Recipesingredients
+                .Where(ri => ri.IdRecipe == id)
+                .ToListAsync();
+
+            _context.Recipesingredients.RemoveRange(recipeIngredients);
             _context.Recipes.Remove(recipe);
             await _context.SaveChangesAsync();
 
